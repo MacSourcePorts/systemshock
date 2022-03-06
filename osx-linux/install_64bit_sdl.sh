@@ -33,7 +33,7 @@ function build_sdl_mixer {
 }
 
 function build_fluidsynth {
-	git clone https://github.com/Doom64/fluidsynth-lite.git
+	git clone https://github.com/parhelia512/fluidsynth-lite
 	pushd fluidsynth-lite
 
 	# force compilation of dynamic library
@@ -68,8 +68,8 @@ cd ./build_ext/
 install_dir=$(pwd)
 
 build_fluidsynth
-build_sdl
-build_sdl_mixer
+# build_sdl
+# build_sdl_mixer
 
 cd ..
 

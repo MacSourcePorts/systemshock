@@ -58,3 +58,6 @@ savgam*.dat
 # Eclipse CDT
 .project
 .cproject
+
+build-x86_64
+build-arm64
