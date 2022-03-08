@@ -1,12 +1,11 @@
 # game/app specific values
-export APP_VERSION="1.3.99999"
-# ecwolf builds an .icns file, we will use that once it's been built
-export ICONSDIR="build-arm64/ecwolf.app/Contents/Resources"
-export ICONSFILENAME="icon"
-export PRODUCT_NAME="ecwolf"
-export EXECUTABLE_NAME="ecwolf"
-export PKGINFO="APPLECWF"
-export COPYRIGHT_TEXT="Wolfenstein 3-D Copyright © 1992 id Software, Inc. All rights reserved."
+export APP_VERSION="1.0"
+export ICONSDIR="osx-linux"
+export ICONSFILENAME="systemshock"
+export PRODUCT_NAME="systemshock"
+export EXECUTABLE_NAME="systemshock"
+export PKGINFO="APPLESS1"
+export COPYRIGHT_TEXT="System Shock © 1994 Looking Glass Studios, Inc. All rights reserved."
 
 #constants
 source ../MSPScripts/constants.sh
@@ -42,8 +41,13 @@ make -j$NCPU
 
 #tweak x86_64 install name
 cd ..
-echo install_name_tool -change $PWD/build_ext/fluidsynth-lite/src/libfluidsynth.1.dylib $PWD/build_ext/fluidsynth-lite/lib/x86_64/libfluidsynth.1.dylib ${X86_64_BUILD_FOLDER}/systemshock
 install_name_tool -change $PWD/build_ext/fluidsynth-lite/src/libfluidsynth.1.dylib $PWD/build_ext/fluidsynth-lite/lib/x86_64/libfluidsynth.1.dylib ${X86_64_BUILD_FOLDER}/systemshock
+
+mkdir -p ${X86_64_BUILD_FOLDER}/${WRAPPER_NAME}
+mkdir -p ${X86_64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}
+mkdir -p ${X86_64_BUILD_FOLDER}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}
+mv ${X86_64_BUILD_FOLDER}/${EXECUTABLE_NAME} ${X86_64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}
+cp ${ICONSDIR}/${ICONS} "${X86_64_BUILD_FOLDER}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/${ICONS}"
 
 # build arm64 fluidsynth
 cd build_ext/fluidsynth-lite
@@ -77,8 +81,14 @@ cd ..
 echo install_name_tool -change $PWD/build_ext/fluidsynth-lite/src/libfluidsynth.1.dylib $PWD/build_ext/fluidsynth-lite/lib/arm64/libfluidsynth.1.dylib ${ARM64_BUILD_FOLDER}/systemshock
 install_name_tool -change $PWD/build_ext/fluidsynth-lite/src/libfluidsynth.1.dylib $PWD/build_ext/fluidsynth-lite/lib/arm64/libfluidsynth.1.dylib ${ARM64_BUILD_FOLDER}/systemshock
 
-# create the app bundle
-# "../MSPScripts/build_app_bundle.sh"
+mkdir -p ${ARM64_BUILD_FOLDER}/${WRAPPER_NAME}
+mkdir -p ${ARM64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}
+mkdir -p ${ARM64_BUILD_FOLDER}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}
+mv ${ARM64_BUILD_FOLDER}/${EXECUTABLE_NAME} ${ARM64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}
+cp ${ICONSDIR}/${ICONS} "${ARM64_BUILD_FOLDER}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/${ICONS}"
+
+create the app bundle
+"../MSPScripts/build_app_bundle.sh"
 
 #copy resources
 # cp build-x86_64/${EXECUTABLE_FOLDER_PATH}/ecwolf.pk3 "${BUILT_PRODUCTS_DIR}/${EXECUTABLE_FOLDER_PATH}"
