@@ -90,8 +90,5 @@ cp ${ICONSDIR}/${ICONS} "${ARM64_BUILD_FOLDER}/${UNLOCALIZED_RESOURCES_FOLDER_PA
 create the app bundle
 "../MSPScripts/build_app_bundle.sh"
 
-#copy resources
-# cp build-x86_64/${EXECUTABLE_FOLDER_PATH}/ecwolf.pk3 "${BUILT_PRODUCTS_DIR}/${EXECUTABLE_FOLDER_PATH}"
-
 #sign and notarize
-# "../MSPScripts/sign_and_notarize.sh" "$1"
+"../MSPScripts/sign_and_notarize.sh" "$1"

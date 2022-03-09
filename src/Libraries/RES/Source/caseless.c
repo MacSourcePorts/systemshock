@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 #include <stdio.h>
 #include <sys/stat.h>
+#include <stdlib.h>
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096
@@ -245,7 +246,22 @@ FILE *fopen_caseless(const char *path, const char *mode) {
     if (path == NULL || mode == NULL)
         return NULL;
 
+#ifdef __APPLE__
+
+    char *macpath;
+    const char * prefix = getenv("HOME");
+    const char suffix[] = "/Library/Application Support/systemshock/";
+    macpath = (char *)malloc(strlen(prefix) + strlen(suffix) + strlen(path) + 1);
+    strcpy(macpath, prefix);
+    strcpy(&macpath[strlen(prefix)], suffix);
+    strcpy(&macpath[strlen(prefix) + strlen(suffix)], path);
+
+    printf("MacSourcePorts: Trying to open %s\n", macpath);
+
+    ret = fopen(macpath, mode);
+#else 
     ret = fopen(path, mode);
+#endif
 
 #ifndef _WIN32 // not windows
     if (ret == NULL) {

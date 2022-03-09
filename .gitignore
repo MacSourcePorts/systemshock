@@ -61,3 +61,4 @@ savgam*.dat
 
 build-x86_64
 build-arm64
+release
