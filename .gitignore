@@ -46,7 +46,7 @@ TestSimpleMain
 **/core
 
 # 3rd Party builds
-build_ext
+# build_ext
 
 # Save files
 CurrentGame.dat

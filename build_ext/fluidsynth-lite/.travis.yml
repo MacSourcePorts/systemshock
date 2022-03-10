@@ -1,0 +1,34 @@
+language: generic
+matrix:
+  include:
+    - os: linux
+      env: CC=gcc-5 CXX=g++-5
+      addons:
+        apt:
+          packages:
+            - g++-5
+          sources: &sources
+            - llvm-toolchain-precise-3.8
+            - ubuntu-toolchain-r-test
+    - os: linux
+      env: CC=clang-3.8 CXX=clang++-3.8
+      addons:
+        apt:
+          packages:
+            - clang-3.8
+          sources: *sources
+    - os: linux
+      env: CC=clang-3.5 CXX=clang++-3.5
+      addons:
+        apt:
+          packages:
+            - clang-3.5
+          sources:
+            - llvm-toolchain-precise-3.5
+            - ubuntu-toolchain-r-test
+
+install: true
+
+script:
+  - cmake .
+  - cmake --build .
