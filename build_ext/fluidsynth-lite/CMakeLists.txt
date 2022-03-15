@@ -58,7 +58,7 @@ option ( enable-profiling "profile the dsp code" off )
 option ( enable-trap-on-fpe "enable SIGFPE trap on Floating Point Exceptions" off )
 option ( enable-fpe-check "enable Floating Point Exception checks and debug messages" off )
 option ( enable-debug "enable debugging (default=no)" off )
-option ( BUILD_SHARED_LIBS "Build a shared object or DLL" on )
+option ( BUILD_SHARED_LIBS "Build a shared object or DLL" off )
 
 # Initialize the library directory name suffix.
 if ( CMAKE_SIZEOF_VOID_P EQUAL 8 )
@@ -251,8 +251,6 @@ if ( CMAKE_BUILD_TYPE MATCHES "Debug" )
     set ( ENABLE_DEBUG 1 )
     set ( DEBUG 1 )
 endif ( CMAKE_BUILD_TYPE MATCHES "Debug" )
-
-message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 
 # General configuration file
 configure_file ( ${CMAKE_CURRENT_SOURCE_DIR}/src/config.cmake
