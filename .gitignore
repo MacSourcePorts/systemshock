@@ -63,3 +63,8 @@ build-x86_64
 build-arm64
 release
 .DS_Store
+build_ext/fluidsynth-lite/lib/x86_64
+src/GameSrc/Headers/shockolate_version.h
+xcode-x86_64
+build_ext/fluidsynth-lite/lib
+build_ext/fluidsynth-lite/include/fluidsynth/version.h

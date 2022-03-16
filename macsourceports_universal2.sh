@@ -14,30 +14,50 @@ rm -rf ${BUILT_PRODUCTS_DIR}
 
 # build x86_64 fluidsynth
 cd build_ext/fluidsynth-lite
-rm -rf lib/x86_64
-mkdir lib/x86_64
-make clean
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="-arch x86_64" .
+#for the first one we can just delete the whole lib dir
+rm -rf lib
+mkdir -p lib/x86_64
+cd lib/x86_64
+cmake -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=x86_64 ../..
 cmake --build .
-cp -a src/libfluidsynth* lib/x86_64
-cd ../..
+cp -a src/libfluidsynth* ../../src
+cp -a include/fluidsynth/version.h ../../include/fluidsynth
+cd ../../../../
 
 # create x86_64 makefiles with cmake
 rm -rf ${X86_64_BUILD_FOLDER}
 mkdir ${X86_64_BUILD_FOLDER}
 cd ${X86_64_BUILD_FOLDER}
-cmake -DCMAKE_C_FLAGS="-arch x86_64" \
-    -DCMAKE_CXX_FLAGS="-arch x86_64" \
+/usr/local/bin/cmake -DCMAKE_OSX_ARCHITECTURES=x86_64 \
+    -DCMAKE_C_FLAGS="-DSDL_DISABLE_IMMINTRIN_H -DGL_SILENCE_DEPRECATION" \
+    -DCMAKE_CXX_FLAGS="-DSDL_DISABLE_IMMINTRIN_H -DGL_SILENCE_DEPRECATION" \
     -DENABLE_SDL2=ON \
     -DENABLE_SOUND=ON \
     -DSDL2_DIR=/usr/local/opt/sdl2/lib/cmake/SDL2 \
     -DSDL2_MIXER_LIBRARIES=/usr/local/lib/libSDL2_mixer.dylib \
     -DENABLE_FLUIDSYNTH="BUNDLED" \
-    ..
+    -B. -S..
 
 # perform x86_64 build with make
 cd ${X86_64_BUILD_FOLDER}
 make -j$NCPU
+
+#DEBUG: Make Xcode proj
+# cd ..
+# rm -rf xcode-x86_64
+# mkdir xcode-x86_64
+# cd xcode-x86_64
+# /usr/local/bin/cmake \
+#     -G Xcode \
+#     -DCMAKE_OSX_ARCHITECTURES=x86_64 \
+#     -DCMAKE_C_FLAGS="-DSDL_DISABLE_IMMINTRIN_H -DGL_SILENCE_DEPRECATION" \
+#     -DCMAKE_CXX_FLAGS="-DSDL_DISABLE_IMMINTRIN_H -DGL_SILENCE_DEPRECATION" \
+#     -DENABLE_SDL2=ON \
+#     -DENABLE_SOUND=ON \
+#     -DSDL2_DIR=/usr/local/opt/sdl2/lib/cmake/SDL2 \
+#     -DSDL2_MIXER_LIBRARIES=/usr/local/lib/libSDL2_mixer.dylib \
+#     -DENABLE_FLUIDSYNTH="BUNDLED" \
+#     -B. -S..
 
 #tweak x86_64 install name
 cd ..
@@ -45,32 +65,35 @@ install_name_tool -change $PWD/build_ext/fluidsynth-lite/src/libfluidsynth.1.dyl
 
 mkdir -p ${X86_64_BUILD_FOLDER}/${WRAPPER_NAME}
 mkdir -p ${X86_64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}
+mkdir -p ${X86_64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}/res
 mkdir -p ${X86_64_BUILD_FOLDER}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}
 mv ${X86_64_BUILD_FOLDER}/${EXECUTABLE_NAME} ${X86_64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}
 cp ${ICONSDIR}/${ICONS} "${X86_64_BUILD_FOLDER}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/${ICONS}"
+cp windows.sf2 ${X86_64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}/res
 
 # build arm64 fluidsynth
 cd build_ext/fluidsynth-lite
-rm -rf lib/arm64
-mkdir lib/arm64
-make clean
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELEASE="-arch arm64" .
-cmake --build .
-cp -a src/libfluidsynth* lib/arm64
-cd ../..
+mkdir -p lib/arm64
+cd lib/arm64
+/usr/local/bin/cmake -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_C_FLAGS_RELEASE="-arch arm64" ../..
+/usr/local/bin/cmake --build .
+cp -a src/libfluidsynth* ../../src
+cp -a include/fluidsynth/version.h ../../include/fluidsynth
+cd ../../../../
 
 # create arm64 makefiles with cmake
 rm -rf ${ARM64_BUILD_FOLDER}
 mkdir ${ARM64_BUILD_FOLDER}
 cd ${ARM64_BUILD_FOLDER}
-cmake -DCMAKE_C_FLAGS="-arch arm64 -DSDL_DISABLE_IMMINTRIN_H" \
-    -DCMAKE_CXX_FLAGS="-arch arm64 -DSDL_DISABLE_IMMINTRIN_H" \
+cmake -DCMAKE_OSX_ARCHITECTURES=arm64 \
+    -DCMAKE_C_FLAGS="-DSDL_DISABLE_IMMINTRIN_H -DGL_SILENCE_DEPRECATION" \
+    -DCMAKE_CXX_FLAGS="-DSDL_DISABLE_IMMINTRIN_H -DGL_SILENCE_DEPRECATION" \
     -DENABLE_SDL2=ON \
     -DENABLE_SOUND=ON \
     -DSDL2_DIR=/opt/homebrew/opt/sdl2/lib/cmake/SDL2 \
     -DSDL2_MIXER_LIBRARIES=/opt/homebrew/lib/libSDL2_mixer.dylib \
     -DENABLE_FLUIDSYNTH="BUNDLED" \
-    ..
+     -B. -S..
 
 # perform arm64 build with make
 cd ${ARM64_BUILD_FOLDER}
