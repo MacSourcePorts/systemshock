@@ -11,6 +11,9 @@
 #define GL_GLEXT_PROTOTYPES
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
+#include <mach-o/dyld.h>
+#include <limits.h>
+#include <libgen.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
@@ -184,8 +187,16 @@ static GLuint loadShader(GLenum type, const char *filename) {
 
     DEBUG("Loading shader %s", filename);
 
-    char fb[256];
-    sprintf(fb, "shaders/%s", filename);
+    char fb[1024];
+
+    char buf[PATH_MAX];
+    uint32_t bufsize = PATH_MAX;
+    if (!_NSGetExecutablePath(buf, &bufsize))
+        puts(buf);
+
+    buf[strlen(buf) - 11] = '\0'; // chop off '/systemshock' - 12 chars
+
+    sprintf(fb, "%s/shaders/%s", buf, filename);
 
     FILE *file = fopen(fb, "r");
     if (file == nullptr) {

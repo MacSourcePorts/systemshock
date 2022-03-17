@@ -1035,11 +1035,8 @@ static int FluidMidiInit(MusicDevice *dev, const unsigned int outputIndex, unsig
     uint32_t bufsize = PATH_MAX;
     if (!_NSGetExecutablePath(buf, &bufsize))
         puts(buf);
-    char suffix[] = "res/";
-
-//    fileName = (char *)malloc(strlen(buf) + strlen(suffix) - 10); // removing "systemshock"
-    strcpy(fileName, buf);
-    strcpy(&fileName[strlen(buf) - 11], suffix);
+    buf[strlen(buf) - 11] = '\0'; // chop off '/systemshock' - 12 chars
+    sprintf(fileName, "%s/res/", buf);
 
     FluidMidiGetOutputName(dev, outputIndex, &fileName[strlen(fileName)], 1024 - strlen(fileName));
     printf("MacSourcePorts: Trying to open path (2) %s\n", fileName);
@@ -1207,17 +1204,14 @@ static unsigned int FluidMidiGetOutputCount(MusicDevice *dev)
     }
 #else
 #ifdef __APPLE__
+    char *respath;
     char buf[PATH_MAX];
     uint32_t bufsize = PATH_MAX;
     if (!_NSGetExecutablePath(buf, &bufsize))
         puts(buf);
-    const char suffix[] = "res";
-
-    char *respath;
-    respath = (char *)malloc(strlen(buf) + strlen(suffix) - 10); // removing "systemshock"
-    strcpy(respath, buf);
-    strcpy(&respath[strlen(buf) - 11], suffix);
-
+    buf[strlen(buf) - 11] = '\0'; // chop off '/systemshock' - 12 chars
+    sprintf(respath, "%s/res/", buf);
+    
     printf("MacSourcePorts: Trying to open dir %s\n", respath);
 
     DIR *dirp = opendir(respath);
@@ -1278,16 +1272,13 @@ static void FluidMidiGetOutputName(MusicDevice *dev, const unsigned int outputIn
     //  probably wants
 
 #ifdef __APPLE__
+    char *respath;
     char buf[PATH_MAX];
     uint32_t bufsize = PATH_MAX;
     if (!_NSGetExecutablePath(buf, &bufsize))
         puts(buf);
-    const char suffix[] = "res";
-
-    char *respath;
-    respath = (char *)malloc(strlen(buf) + strlen(suffix) - 10); // removing "systemshock"
-    strcpy(respath, buf);
-    strcpy(&respath[strlen(buf) - 11], suffix);
+    buf[strlen(buf) - 11] = '\0'; // chop off '/systemshock' - 12 chars
+    sprintf(respath, "%s/res/", buf);
 
     printf("MacSourcePorts: Trying to open dir %s\n", respath);
 

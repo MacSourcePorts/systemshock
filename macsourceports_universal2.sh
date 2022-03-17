@@ -67,10 +67,12 @@ install_name_tool -change $PWD/build_ext/fluidsynth-lite/src/libfluidsynth.1.dyl
 mkdir -p ${X86_64_BUILD_FOLDER}/${WRAPPER_NAME}
 mkdir -p ${X86_64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}
 mkdir -p ${X86_64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}/res
+mkdir -p ${X86_64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}/shaders
 mkdir -p ${X86_64_BUILD_FOLDER}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}
 mv ${X86_64_BUILD_FOLDER}/${EXECUTABLE_NAME} ${X86_64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}
 cp ${ICONSDIR}/${ICONS} "${X86_64_BUILD_FOLDER}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/${ICONS}"
 cp windows.sf2 ${X86_64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}/res
+cp -a shaders/. ${X86_64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}/shaders
 
 # build arm64 fluidsynth
 cd build_ext/fluidsynth-lite
@@ -109,16 +111,20 @@ install_name_tool -change $PWD/build_ext/fluidsynth-lite/src/libfluidsynth.1.dyl
 mkdir -p ${ARM64_BUILD_FOLDER}/${WRAPPER_NAME}
 mkdir -p ${ARM64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}
 mkdir -p ${ARM64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}/res
+mkdir -p ${ARM64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}/shaders
 mkdir -p ${ARM64_BUILD_FOLDER}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}
 mv ${ARM64_BUILD_FOLDER}/${EXECUTABLE_NAME} ${ARM64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}
 cp ${ICONSDIR}/${ICONS} "${ARM64_BUILD_FOLDER}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/${ICONS}"
 cp windows.sf2 ${ARM64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}/res
+cp -a shaders/. ${ARM64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}/shaders
 
 create the app bundle
 "../MSPScripts/build_app_bundle.sh"
 
 mkdir -p ${BUILT_PRODUCTS_DIR}/${EXECUTABLE_FOLDER_PATH}/res
+mkdir -p ${BUILT_PRODUCTS_DIR}/${EXECUTABLE_FOLDER_PATH}/shaders
 cp windows.sf2 ${BUILT_PRODUCTS_DIR}/${EXECUTABLE_FOLDER_PATH}/res
+cp -a shaders/. ${BUILT_PRODUCTS_DIR}/${EXECUTABLE_FOLDER_PATH}/shaders
 
 #sign and notarize
 "../MSPScripts/sign_and_notarize.sh" "$1"
