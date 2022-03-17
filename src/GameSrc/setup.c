@@ -83,6 +83,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <mprintf.h>
 #endif
 
+#ifdef __APPLE__
+#include <stdlib.h>
+#endif
+
 #define KEYBOARD_FOCUS_COLOR (RED_BASE + 3)
 #define NORMAL_ENTRY_COLOR (RED_BASE + 7)
 #define CURRENT_DIFF_COLOR (RED_BASE + 3)
@@ -1207,7 +1211,14 @@ errtype load_savegame_names(void) {
     for (i = 0; i < NUM_SAVE_SLOTS; i++) {
         Poke_SaveName(i);
 
+#ifdef __APPLE__
+        char full_save_game_name[1024];
+        sprintf(full_save_game_name, "%s/Library/Application Support/systemshock/%s", getenv("HOME"), save_game_name);
+        printf("MacSourcePorts full_save_game_name: %s\n", full_save_game_name);
+        if (access(full_save_game_name, F_OK) != -1) {
+#else
         if (access(save_game_name, F_OK) != -1) {
+#endif
             file = ResOpenFile(save_game_name);
             if (ResInUse(OLD_SAVE_GAME_ID_BASE)) {
 #ifdef OLD_SG_FORMAT

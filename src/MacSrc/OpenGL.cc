@@ -187,6 +187,7 @@ static GLuint loadShader(GLenum type, const char *filename) {
 
     DEBUG("Loading shader %s", filename);
 
+#ifdef __APPLE__
     char fb[1024];
 
     char buf[PATH_MAX];
@@ -197,6 +198,10 @@ static GLuint loadShader(GLenum type, const char *filename) {
     buf[strlen(buf) - 11] = '\0'; // chop off '/systemshock' - 12 chars
 
     sprintf(fb, "%s/shaders/%s", buf, filename);
+#else
+    char fb[256];
+    sprintf(fb, "shaders/%s", filename);
+#endif
 
     FILE *file = fopen(fb, "r");
     if (file == nullptr) {
