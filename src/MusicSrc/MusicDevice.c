@@ -1204,7 +1204,7 @@ static unsigned int FluidMidiGetOutputCount(MusicDevice *dev)
     }
 #else
 #ifdef __APPLE__
-    char *respath;
+    char *respath[1024];
     char buf[PATH_MAX];
     uint32_t bufsize = PATH_MAX;
     if (!_NSGetExecutablePath(buf, &bufsize))
@@ -1272,7 +1272,7 @@ static void FluidMidiGetOutputName(MusicDevice *dev, const unsigned int outputIn
     //  probably wants
 
 #ifdef __APPLE__
-    char *respath;
+    char *respath[1024];
     char buf[PATH_MAX];
     uint32_t bufsize = PATH_MAX;
     if (!_NSGetExecutablePath(buf, &bufsize))
