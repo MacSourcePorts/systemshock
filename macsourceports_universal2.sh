@@ -2,7 +2,7 @@
 export APP_VERSION="1.0"
 export ICONSDIR="osx-linux"
 export ICONSFILENAME="systemshock"
-export PRODUCT_NAME="systemshock"
+export PRODUCT_NAME="Shockolate"
 export EXECUTABLE_NAME="systemshock"
 export PKGINFO="APPLESS1"
 export COPYRIGHT_TEXT="System Shock © 1994 Looking Glass Studios, Inc. All rights reserved."
@@ -62,7 +62,7 @@ make -j$NCPU
 
 #tweak x86_64 install name
 cd ..
-install_name_tool -change $PWD/build_ext/fluidsynth-lite/src/libfluidsynth.1.dylib $PWD/build_ext/fluidsynth-lite/lib/x86_64/libfluidsynth.1.dylib ${X86_64_BUILD_FOLDER}/systemshock
+install_name_tool -change $PWD/build_ext/fluidsynth-lite/src/libfluidsynth.1.dylib $PWD/build_ext/fluidsynth-lite/lib/x86_64/libfluidsynth.1.dylib ${X86_64_BUILD_FOLDER}/${EXECUTABLE_NAME}
 
 mkdir -p ${X86_64_BUILD_FOLDER}/${WRAPPER_NAME}
 mkdir -p ${X86_64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}
@@ -105,8 +105,7 @@ make -j$NCPU
 
 #tweak arm64 install name
 cd ..
-echo install_name_tool -change $PWD/build_ext/fluidsynth-lite/src/libfluidsynth.1.dylib $PWD/build_ext/fluidsynth-lite/lib/arm64/libfluidsynth.1.dylib ${ARM64_BUILD_FOLDER}/systemshock
-install_name_tool -change $PWD/build_ext/fluidsynth-lite/src/libfluidsynth.1.dylib $PWD/build_ext/fluidsynth-lite/lib/arm64/libfluidsynth.1.dylib ${ARM64_BUILD_FOLDER}/systemshock
+install_name_tool -change $PWD/build_ext/fluidsynth-lite/src/libfluidsynth.1.dylib $PWD/build_ext/fluidsynth-lite/lib/arm64/libfluidsynth.1.dylib ${ARM64_BUILD_FOLDER}/${EXECUTABLE_NAME}
 
 mkdir -p ${ARM64_BUILD_FOLDER}/${WRAPPER_NAME}
 mkdir -p ${ARM64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}
@@ -118,13 +117,29 @@ cp ${ICONSDIR}/${ICONS} "${ARM64_BUILD_FOLDER}/${UNLOCALIZED_RESOURCES_FOLDER_PA
 cp windows.sf2 ${ARM64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}/res
 cp -a shaders/. ${ARM64_BUILD_FOLDER}/${EXECUTABLE_FOLDER_PATH}/shaders
 
-create the app bundle
+# making two app bundles, one for software-only mode, another for software and OpenGL
+# the only difference is the software-only mode does not have the "shaders" directory
+# doing this because at this time I'm experiencing an issue on Apple Silicon with the OpenGL modes
+
+#create the app bundle
 "../MSPScripts/build_app_bundle.sh"
 
 mkdir -p ${BUILT_PRODUCTS_DIR}/${EXECUTABLE_FOLDER_PATH}/res
-mkdir -p ${BUILT_PRODUCTS_DIR}/${EXECUTABLE_FOLDER_PATH}/shaders
 cp windows.sf2 ${BUILT_PRODUCTS_DIR}/${EXECUTABLE_FOLDER_PATH}/res
+
+#sign and notarize the version without shaders
+"../MSPScripts/sign_and_notarize.sh" "$1"
+
+#move/rename the zipped files
+cp -a "${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}_softwaremode.app"
+if [ "$1" == "notarize" ]; then
+    mv "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}_prenotarized.zip" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}_softwaremode_prenotarized.zip"
+    mv "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}_notarized_$(date +"%Y-%m-%d").zip" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}_softwaremode_notarized_$(date +"%Y-%m-%d").zip"
+fi
+
+#now copy the shaders to the bundle
+mkdir -p ${BUILT_PRODUCTS_DIR}/${EXECUTABLE_FOLDER_PATH}/shaders
 cp -a shaders/. ${BUILT_PRODUCTS_DIR}/${EXECUTABLE_FOLDER_PATH}/shaders
 
-#sign and notarize
+#sign and notarize the version with
 "../MSPScripts/sign_and_notarize.sh" "$1"
