@@ -73,7 +73,7 @@ endif(ENABLE_SDL2 MATCHES "BUNDLED")
 if(ENABLE_SOUND MATCHES "ON")
 	# FIXME applies only for *nix systems
 	find_package(PkgConfig)
-	pkg_check_modules(SDL2_MIXER REQUIRED SDL2_mixer>=2.0.4)
+	pkg_check_modules(SDL2_MIXER REQUIRED SDL2_mixer)
 	add_definitions(-DUSE_SDL_MIXER=1)
 endif(ENABLE_SOUND MATCHES "ON")
 if(ENABLE_SOUND MATCHES "BUNDLED")
